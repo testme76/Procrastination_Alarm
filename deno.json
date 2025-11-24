@@ -1,0 +1,13 @@
+{
+  "tasks": {
+    "monitor": "deno run --unstable-ffi --allow-all procrastination-detector.ts"
+  },
+  "imports": {
+    "@corespeed/zypher": "jsr:@corespeed/zypher@^0.5.1",
+    "rxjs-for-await": "npm:rxjs-for-await@^1.0.0"
+  },
+  "compilerOptions": {
+    "lib": ["deno.window"],
+    "strict": true
+  }
+}
