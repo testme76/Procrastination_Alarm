@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "monitor": "deno run --unstable-ffi --allow-all procrastination-detector.ts"
+    "agent": "deno run --unstable-ffi --allow-all agent-detector.ts"
   },
   "imports": {
     "@corespeed/zypher": "jsr:@corespeed/zypher@^0.5.1",

@@ -27,7 +27,9 @@ export class ScreenAnalyzer {
 
       // Capture screenshot using PowerShell (Windows)
       if (Deno.build.os === "windows") {
-        const tempPath = `${Deno.env.get("TEMP")}\\procrastination_check.png`;
+        // Use fallback if TEMP not available
+        const tempDir = Deno.env.get("TEMP") || Deno.env.get("TMP") || ".";
+        const tempPath = `${tempDir}\\procrastination_check.png`;
 
         const script = `
 Add-Type -AssemblyName System.Windows.Forms,System.Drawing

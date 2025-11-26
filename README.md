@@ -1,14 +1,22 @@
 # Procrastination Alarm
 
-An AI-powered productivity tool that monitors your computer activity system-wide and alerts you when you're procrastinating. Works across all applications on Windows to help keep you focused.
+An **AI Agent-powered** productivity tool that monitors your computer activity and **autonomously decides** how to help you stay focused. Uses advanced AI reasoning to choose the right intervention at the right time, and learns from your behavior patterns over time.
 
 ## Features
 
+### 🤖 AI Agent Mode (NEW!)
+- **Autonomous Decision-Making**: AI agent analyzes context and decides the best intervention strategy
+- **Adaptive Interventions**: Chooses between strong alarms, gentle notifications, or subtle reminders based on situation
+- **Context-Aware**: Considers time of day, recent interventions, and your activity patterns
+- **Learning & Memory**: Tracks what works for you and improves over time
+- **Pattern Recognition**: Identifies your productive hours and procrastination triggers
+
+### Classic Features
 - **Global Activity Monitoring**: Tracks keyboard and mouse activity system-wide (not just in one app)
 - **Smart AI Detection**: Uses Claude AI to analyze screen content and detect procrastination
-- **Instant Alerts**: System beep and Windows notifications when procrastination is detected
-- **Auto-Dismissal**: Alerts disappear automatically when you resume productive activity
-- **Configurable**: Customize idle thresholds and detection sensitivity
+- **Multiple Alert Types**: Strong alarms, notifications, or gentle reminders - agent decides
+- **Auto-Dismissal**: Alerts disappear when you resume productive activity
+- **Productivity Insights**: Get analytics on your work patterns and effectiveness
 
 ## Prerequisites
 
@@ -40,40 +48,39 @@ ANTHROPIC_API_KEY=your_api_key_here
 ### 3. Run the Application
 
 ```bash
-deno task monitor
+deno task agent
 ```
 
-This command runs with all necessary permissions (`--unstable-ffi --allow-all`).
+This runs with all necessary permissions (`--unstable-ffi --allow-all`).
 
-## Usage Modes
+## Usage
 
-### Basic Mode (Activity Monitoring Only)
+### 🤖 AI Agent Mode
 
-Monitors keyboard/mouse activity and alerts on idle time:
+The AI agent autonomously manages your productivity by:
 
-```typescript
-// In procrastination-detector.ts
-const config: AlarmConfig = {
-  idleThresholdSeconds: 5,      // Alert after 5 seconds idle
-  enableAIAnalysis: false,      // No AI - just idle detection
-  soundEnabled: true,           // Play beep sound
-};
+1. **Analyzing Context**: Every 10 seconds, the agent evaluates:
+   - Your current activity (via screen analysis)
+   - How long you've been idle
+   - Time of day and productivity patterns
+   - Recent interventions and their effectiveness
+
+2. **Making Decisions**: The agent uses Claude Sonnet to reason about:
+   - Should I intervene right now?
+   - What type of intervention is most appropriate?
+   - What message will be most effective?
+
+3. **Learning Over Time**: The agent tracks:
+   - Which interventions work best for you
+   - Your productive vs. unproductive hours
+   - Patterns in your procrastination behavior
+
+**Run the agent:**
+```bash
+deno task agent
 ```
 
-### AI Mode (Smart Detection)
-
-Uses AI to analyze screen content for procrastination:
-
-```typescript
-// In procrastination-detector.ts
-const config: AlarmConfig = {
-  idleThresholdSeconds: 5,      // Still monitors idle time
-  enableAIAnalysis: true,       // Enable AI screen analysis
-  soundEnabled: true,           // Play beep sound
-};
-```
-
-**Note**: AI mode requires your `ANTHROPIC_API_KEY` in `.env`.
+The agent will display its reasoning process in real-time, showing you how it makes decisions.
 
 ## How It Works
 
@@ -85,45 +92,46 @@ const config: AlarmConfig = {
 
 ## Configuration Options
 
-Edit [`procrastination-detector.ts`](./procrastination-detector.ts) to customize:
+Edit [`agent-detector.ts`](./agent-detector.ts) to customize:
 
 ```typescript
-interface AlarmConfig {
-  idleThresholdSeconds: number;    // Seconds before triggering alarm (default: 5)
-  enableAIAnalysis: boolean;       // Use AI to detect procrastination (default: false)
-  soundEnabled: boolean;           // Play alert sounds (default: true)
+interface AgentConfig {
+  idleThresholdSeconds: number;           // Seconds before considering user idle (default: 5)
+  enableAIAnalysis: boolean;              // Use AI screen analysis (default: true)
+  soundEnabled: boolean;                  // Play alert sounds (default: true)
+  screenCheckIntervalSeconds: number;     // How often agent analyzes (default: 10)
+  enableMemory: boolean;                  // Enable learning from patterns (default: true)
 }
 ```
 
 ### Recommended Settings
 
-- **For strict productivity**: `idleThresholdSeconds: 5`, `enableAIAnalysis: true`
-- **For gentle reminders**: `idleThresholdSeconds: 30`, `enableAIAnalysis: false`
-- **For testing**: `idleThresholdSeconds: 3`, check `test-analyzer.ts`
-
-## Testing
-
-Test the screen analyzer independently:
-
-```bash
-deno run --unstable-ffi --allow-all test-analyzer.ts
-```
-
-This captures a screenshot and shows AI analysis results.
+- **For strict productivity**: `idleThresholdSeconds: 5`, `screenCheckIntervalSeconds: 10`
+- **For gentle reminders**: `idleThresholdSeconds: 30`, `screenCheckIntervalSeconds: 30`
+- **To disable learning**: `enableMemory: false`
 
 ## Project Structure
 
 ```
-├── activity-monitor.ts           # Global keyboard/mouse tracking
-├── screen-analyzer.ts            # AI-powered screen analysis
-├── procrastination-detector.ts   # Main application logic
-├── generate-alarm-sound.ts       # Sound generation utility
-├── main.ts                       # Alternative entry point
-├── test-analyzer.ts              # Test harness for AI
-├── test-analyzer-debug.ts        # Debug version with verbose output
-├── test-with-delay.ts            # Delayed test for setup
+├── agent-detector.ts             # Main entry point - AI agent coordinator
+├── productivity-agent.ts         # Core AI agent decision-making logic
+├── memory-system.ts              # Learning and pattern tracking system
+├── activity-monitor.ts           # Global keyboard/mouse activity tracking
+├── screen-analyzer.ts            # AI-powered screen content analysis
 └── deno.json                     # Deno configuration & tasks
 ```
+
+## Architecture
+
+The system uses an **autonomous AI agent** approach:
+
+- **Proactive**: Analyzes situation and decides best action every 10 seconds
+- **Context-aware**: Considers time, patterns, recent interventions, productive hours
+- **Adaptive**: Learns what works for you and improves over time
+- **Multi-strategy**: Can choose between alarm, notification, or gentle reminder
+- **Memory-based**: Tracks productive hours, effectiveness rates, and session history
+
+The agent uses the **Zypher framework** to give Claude the ability to reason about your productivity context and make intelligent decisions.
 
 ## Troubleshooting
 
@@ -131,12 +139,9 @@ This captures a screenshot and shows AI analysis results.
 
 Make sure you're running with proper permissions:
 ```bash
-deno run --unstable-ffi --allow-all procrastination-detector.ts
-```
-
-Or use the task command:
-```bash
-deno task monitor
+deno run --unstable-ffi --allow-all agent-detector.ts
+# or
+deno task agent
 ```
 
 ### "Failed to start activity monitor"

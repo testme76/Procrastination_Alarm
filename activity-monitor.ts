@@ -31,9 +31,9 @@ export class ActivityMonitor {
         this.recordActivity();
       }
     } catch (error) {
-      console.error("❌ Failed to start activity monitor:", error);
-      console.log("💡 Make sure to run with: deno run --unstable-ffi --allow-all");
-      throw error;
+      console.error("⚠️  gkm event processing error:", error.message);
+      console.log("⚠️  This can happen with certain keyboard/mouse events - continuing anyway");
+      // Don't throw - gkm might fail on specific events but keep working overall
     }
   }
 
